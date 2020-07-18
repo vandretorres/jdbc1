@@ -3,15 +3,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 
 public class DB {
 
 
+	// Atributo que armazena a conexão com banco de dados
 	private static Connection conn = null;
 
+
+
+	// Cria conexão com banco de dados
 	public static Connection getConnection() {
 
 		if ( conn == null) {
@@ -34,6 +40,7 @@ public class DB {
 	}
 
 
+	// Fecha conexão com banco de dados
 	public static void closeConnection() {
 
 
@@ -51,7 +58,7 @@ public class DB {
 		}
 
 	}
-	
+
 
 	private static Properties loadProperties() {
 
@@ -67,7 +74,37 @@ public class DB {
 		}
 
 	}
+
+	// Fecha conexão do Statementt lançando exceção para Classe especifica
+	public static void closeStatement(Statement st) {
+
+		try {
+
+			if ( st != null)
+			{
+				st.close();
+			}
+
+		} catch (SQLException e) {
+
+			throw new DbException(e.getMessage());
+		}		
+	}
+
 	
-	
+	// FEcha conexão do ResultSet lançando exceção para Classe especifica
+	public static void closeResultSet(ResultSet rs ) {
+		try {
+
+			if ( rs != null) {
+				rs.close();
+			}
+
+		} catch (SQLException e) {
+
+			throw new DbException(e.getMessage());
+		}	
+	}
+
 
 }
