@@ -1,9 +1,10 @@
 package application;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import db.DB;
 
@@ -11,45 +12,50 @@ public class ProgramTesteResultSet {
 
 	public static void main(String[] args) {
 
+		
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");				
+		Connection conn = null;
 
-
-		Connection conn = null; 
-		Statement st = null;
-		ResultSet rs = null;
+		// Usado para manipulação dos dados na Base
+		PreparedStatement st = null;
 
 		try {
-
 			conn = DB.getConnection();
+			
+			// cria Statement para insrção de  dados
+			st = conn.prepareStatement(
+					"INSERT into seller "
+							+ "(Name, Email,BirthDate, BaseSalary,DepartmentId)"
+							+ "values "
+							+ "(?,?,?,?,?)"				
+					);
 
 
-			// Instanciando objeto do tipo Statement
-			st = conn.createStatement();
+			// substitui palceholders ( ? ) com valores que serão inseridos na base
+			st.setString(1,"Carl Purple");
+			st.setString(2,"cpurple@gmail.com");
+			st.setDate(3, new java.sql.Date(sdf.parse("14/12/1981").getTime()));
+			st.setDouble(4, 3000.0);
+			st.setInt(5,4);
 
+			
+			// Executa statement
+			int rowAffected = st.executeUpdate();
 
-			// Executando query
-			rs = st.executeQuery("select * from department");
-
-
-
-			// percorrendo ResultSet para imprimir resultado da query
-
-			System.out.println("Resultado da pesquisa:\n");
-			while(rs.next()) {
-
-				System.out.println(rs.getInt("Id") + " - " + rs.getString("Name"));
-
-			}	
-
+			System.out.println("Done! " + rowAffected + " rows Affected");
 
 		}catch (SQLException e) {
 
-			e.printStackTrace();			
+			e.printStackTrace();
+		}catch (ParseException e) {
+            e.printStackTrace();
 		}finally {
-
-			DB.closeResultSet(rs);
+			
 			DB.closeStatement(st);
-			DB.closeConnection();			
+			DB.closeStatement(st);
 		}
+
 	}
 
 }
