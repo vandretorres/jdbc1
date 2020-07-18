@@ -3,10 +3,12 @@ package application;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import db.DB;
+import db.DbIntegrityException;
 
-public class ProgramUpdateData {
+public class ProgramDeleteData {
 
 
 	public static void main(String[] args) {
@@ -22,14 +24,12 @@ public class ProgramUpdateData {
 			conn = DB.getConnection();
 			
 			st = conn.prepareStatement(
-					"update seller "
-					+ "set BaseSalary = BaseSalary + ? "
-					+ "WHERE "
-					+ "DepartmentId = ?"					
-					);
+					"DELETE FROM  department"
+					+ " where "
+					+ " Id = ?"
+					);			
 			
-			st.setDouble(1, 200.00);
-			st.setInt(2, 4);
+			st.setInt(1, 2);
 			
 			int rowsAffected = st.executeUpdate();
 			
@@ -38,8 +38,9 @@ public class ProgramUpdateData {
 			
 
 		}catch (SQLException e) {
-			e.printStackTrace();		
-		}finally {
+			throw new DbIntegrityException(e.getMessage());		
+	}	
+		finally {
 			
 			DB.closeStatement(st);
 			DB.closeStatement(st);
