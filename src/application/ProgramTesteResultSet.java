@@ -16,7 +16,6 @@ public class ProgramTesteResultSet {
 
 		
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");				
 		Connection conn = null;
 
 		// Usado para manipulação dos dados na Base
@@ -25,50 +24,24 @@ public class ProgramTesteResultSet {
 		try {
 			conn = DB.getConnection();
 			
-			// cria Statement para insrção de  dados
 			st = conn.prepareStatement(
-					"INSERT into seller "
-							+ "(Name, Email,BirthDate, BaseSalary,DepartmentId)"
-							+ "values "
-							+ "(?,?,?,?,?)",
-							Statement.RETURN_GENERATED_KEYS
+					"update seller "
+					+ "set BaseSalary = BaseSalary + ? "
+					+ "WHERE "
+					+ "DepartmentId = ?"					
 					);
-
-
-			// substitui palceholders ( ? ) com valores que serão inseridos na base
-			st.setString(1,"Mike Ross");
-			st.setString(2,"ross@gmail.com");
-			st.setDate(3, new java.sql.Date(sdf.parse("13/07/1985").getTime()));
-			st.setDouble(4, 3000.0);
-			st.setInt(5,4);
+			
+			st.setDouble(1, 200.00);
+			st.setInt(2, 4);
+			
+			int rowsAffected = st.executeUpdate();
+			
+			System.out.println(rowsAffected + " rows Affected!");
 			
 			
-			// Executa statement
-			int rowAffected = st.executeUpdate();
-
-			if ( rowAffected > 0) {
-				
-				ResultSet rs = st.getGeneratedKeys();
-				
-				while(rs.next()) {
-					
-					int id = rs.getInt(1);
-					
-					System.out.println("Id gerado pela inserção: " + id);
-					
-				}
-				
-			}else {
-				
-				System.out.println("No rows affected");
-				
-			}
 
 		}catch (SQLException e) {
-
-			e.printStackTrace();
-		}catch (ParseException e) {
-            e.printStackTrace();
+			e.printStackTrace();		
 		}finally {
 			
 			DB.closeStatement(st);
